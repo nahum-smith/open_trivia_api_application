@@ -88,4 +88,18 @@ request.get(triviaURL, (err, response, body) => {
 
 // Steps for retrieving all novel content from opentdb site
 //    1) set session token
-//    2)
+//    2) for each category
+//        1) for each difficulty 
+//            1) set amount to 50
+//            2) set url querystring parameters
+//            3) make API Call
+//            4)
+//                a) if responseCode === 0
+//                    1) parse returned data
+//                    2) Save data in DB (TODO: create schema)
+//                    3) Step (3) from above (make API call) (recursive)
+//                b) if responseCode === 1
+//                c) if responseCode === 2
+//                d) if responseCode === 3
+//                e) if responseCode === 4
+//                    1) break our of difficulty loop
