@@ -24,12 +24,14 @@ const assert = require('assert')
 //  base = https://opentdb.com
 //  API content = /api.php
   //  queries - ?
-      // amount - (number of questions)
+      // amount - Integer( number of questions)
+      // category - Integer(content type)
 //  Sessions = /api_token.php
   // queries - ?
       // token = (session token)
       // command = (api command)
       //
+
 
 
 const triviaURL = 'https://opentdb.com/api.php?amount=10&category=23'
@@ -38,3 +40,8 @@ request.get(triviaURL, (err, response, body) => {
   let parseData = JSON.parse(body)
   console.log(parseData.results)
 })
+
+
+
+// Steps for retrieving all novel content from opentdb site
+//    1) Send API Call
