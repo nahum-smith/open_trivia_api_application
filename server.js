@@ -81,7 +81,7 @@ const paths = {
   content: '/api.php'
 }
 
-const params = {
+const contentOptions = {
   amount: Number(),
   category: [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],
   difficulty: ['easy', 'medium', 'hard'],
@@ -92,18 +92,6 @@ const baseURL = 'https://opentdb.com'
 const myURL = new URL(baseURL)
 myURL.pathname = paths.content
 
-const searchParams = new URLSearchParams({
-  amount: Number(),
-  category: 17,
-  difficulty: 'hard',
-  type: 'multiple'
-})
-
-myURL.search = params
-console.log(myURL.href)
-triviaURL = myURL.href
-
-
 // request.get(triviaURL, (err, response, body) => {
 //   assert.equal(null, err)
 //   console.log(body)
@@ -111,12 +99,52 @@ triviaURL = myURL.href
 //   assert.equal(parseData.response_code, 0)
 //   console.log(parseData.results)
 // })
+const requestURL = new URL(baseURL)
 
-
-const setAPIToken = (baseURL) => {
-  let requestTokenURL = new URL(baseURL)
-  requestTokenURL.pathname = '/api_token.php'
+const setAPIToken = (urlObject) => {
+  urlObject.pathname = paths.token
+  // return urlObject
 }
+const setAPIRequestPath = (urlObject) => {
+  urlObject.pathname = paths.content
+  // return urlObject
+}
+
+setAPIRequestPath(requestURL)
+
+function* getSearchURLS(contentOptions, requestURL) {
+  let requestURLQuery
+  for (let categoryIndex = 0; categoryIndex < contentOptions.category.length; categoryIndex++) {
+    for (let difficultyIndex = 0; difficultyIndex < contentOptions.difficulty.length; difficultyIndex++) {
+      for (let typeIndex = 0; typeIndex < contentOptions.type.length; typeIndex++) {
+        let requestParams = new URLSearchParams({
+          amount: 50,
+          category: contentOptions.category[categoryIndex],
+          difficulty: contentOptions.difficulty[difficultyIndex],
+          type: contentOptions.type[typeIndex]
+        })
+        requestURL.search = requestParams
+        requestURLQuery = requestURL.href
+        yield requestURLQuery
+      }
+    }
+  }
+}
+
+requestURLIterator = getSearchURLS(contentOptions, requestURL)
+
+function iterateIterator(iterator, contIterate=true) {
+  while (contIterate) {
+    let data = iterator.next()
+    if (data.done) {
+      contIterate = false
+    } else {
+      console.log(data.value)
+    }
+  }
+}
+
+
 
 
 // Steps for retrieving all novel content from opentdb site
