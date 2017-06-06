@@ -92,25 +92,31 @@ const baseURL = 'https://opentdb.com'
 const myURL = new URL(baseURL)
 myURL.pathname = paths.content
 
-// request.get(triviaURL, (err, response, body) => {
-//   assert.equal(null, err)
-//   console.log(body)
-//   let parseData = JSON.parse(body)
-//   assert.equal(parseData.response_code, 0)
-//   console.log(parseData.results)
-// })
-const requestURL = new URL(baseURL)
+const baseURLObject = new URL(baseURL)
 
-const setAPIToken = (urlObject) => {
-  urlObject.pathname = paths.token
-  // return urlObject
+const tokenURLObject = baseURLObject
+
+
+function setAPIToken(tokenURLObject) {
+  tokenURLObject.pathname = paths.token
+  tokenURLObject.search = 'command=request'
+  return new Promise((resolve, reject) => {
+    request(tokenURLObject.href, (err, response, body) => {
+      let parseData = JSON.parse(body)
+      resolve(parseData)
+      reject(err)
+    })
+  })
 }
+setAPIToken(tokenURLObject).then((data) => {
+  console.log(data.token)
+})
+
 const setAPIRequestPath = (urlObject) => {
   urlObject.pathname = paths.content
   // return urlObject
 }
 
-setAPIRequestPath(requestURL)
 
 function* getSearchURLS(contentOptions, requestURL) {
   let requestURLQuery
@@ -131,7 +137,6 @@ function* getSearchURLS(contentOptions, requestURL) {
   }
 }
 
-requestURLIterator = getSearchURLS(contentOptions, requestURL)
 
 function iterateIterator(iterator, contIterate=true) {
   while (contIterate) {
@@ -144,6 +149,15 @@ function iterateIterator(iterator, contIterate=true) {
   }
 }
 
+function sendRequestToAPI(url) {
+  request.get(url, (err, response, body) => {
+    assert.equal(null, err)
+    console.log(body)
+    let parseData = JSON.parse(body)
+    assert.equal(parseData.response_code, 0)
+    console.log(parseData.results)
+  })
+}
 
 
 
