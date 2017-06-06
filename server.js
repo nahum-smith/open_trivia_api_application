@@ -1,6 +1,7 @@
 const express = require('express')
 const request = require('request')
 const assert = require('assert')
+const { URL, URLSearchParams } = require('url')
 
 // Categories
 // 9 - General knowledge
@@ -73,33 +74,68 @@ const assert = require('assert')
       //
 
 
+let triviaURL
 
+const paths = {
+  token: '/api_token.php',
+  content: '/api.php'
+}
 
-const triviaURL = 'https://opentdb.com/api.php?amount=10&category=23'
-request.get(triviaURL, (err, response, body) => {
-  assert.equal(null, err)
-  console.log(body)
-  let parseData = JSON.parse(body)
-  assert.equal(parseData.response_code, 0)
-  console.log(parseData.results)
+const params = {
+  amount: Number(),
+  category: [9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32],
+  difficulty: ['easy', 'medium', 'hard'],
+  type: ['multiple', 'boolean']
+}
+
+const baseURL = 'https://opentdb.com'
+const myURL = new URL(baseURL)
+myURL.pathname = paths.content
+
+const searchParams = new URLSearchParams({
+  amount: Number(),
+  category: 17,
+  difficulty: 'hard',
+  type: 'multiple'
 })
 
+myURL.search = params
+console.log(myURL.href)
+triviaURL = myURL.href
+
+
+// request.get(triviaURL, (err, response, body) => {
+//   assert.equal(null, err)
+//   console.log(body)
+//   let parseData = JSON.parse(body)
+//   assert.equal(parseData.response_code, 0)
+//   console.log(parseData.results)
+// })
+
+
+const setAPIToken = (baseURL) => {
+  let requestTokenURL = new URL(baseURL)
+  requestTokenURL.pathname = '/api_token.php'
+}
 
 
 // Steps for retrieving all novel content from opentdb site
-//    1) set session token
+//    1) session token
+//        1) Request token from opentdb
+//        2) set token
 //    2) for each category
-//        1) for each difficulty 
+//        1) for each difficulty
 //            1) set amount to 50
 //            2) set url querystring parameters
 //            3) make API Call
 //            4)
 //                a) if responseCode === 0
 //                    1) parse returned data
-//                    2) Save data in DB (TODO: create schema)
+//                    2) Save data in DB (TODO: create schema, and integrate DB)
 //                    3) Step (3) from above (make API call) (recursive)
 //                b) if responseCode === 1
 //                c) if responseCode === 2
 //                d) if responseCode === 3
+//                    1) reset session token
 //                e) if responseCode === 4
 //                    1) break our of difficulty loop
